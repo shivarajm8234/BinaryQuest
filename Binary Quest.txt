@@ -1,0 +1,9 @@
+The user first enters a number.
+
+The number is automatically converted to its binary equivalent using C code.
+
+Each bit of the binary representation will be "dropped" or appear at the bottom of the screen (the "collecting box").
+
+The player's goal is to move a collection "box" or pointer to gather these bits as they fall, inputting from the keyboard to move left or right in the console window.
+
+The program uses console graphics: printf for display, keyboard input functions like getch() or similar for real-time key events, and system calls like system("cls") or platform-specific alternatives to redraw the interface
