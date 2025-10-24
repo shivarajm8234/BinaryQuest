@@ -57,6 +57,12 @@ bool initGame(GameState* game, int number, ConversionType conversionType) {
     
     game->originalNumber = number;
     game->conversionType = conversionType;
+    
+    // Clear bits array before conversion
+    for (int i = 0; i < MAX_BITS; i++) {
+        game->bits[i] = 0;
+    }
+    
     game->bitCount = convertToBinary(number, game->bits, MAX_BITS, conversionType);
     game->currentBitIndex = 0;
     game->expectedBitIndex = 0;
@@ -183,7 +189,31 @@ void generateNewLevel(GameState* game) {
     }
 
     // Generate random number for new level
-    int newNumber = game->minNumber + rand() % (game->maxNumber - game->minNumber + 1);
+    int newNumber;
+    
+    if (game->conversionType == CONVERSION_OCTAL) {
+        // For octal, generate a valid octal number (no digits 8 or 9)
+        // Generate a decimal number first, then convert to octal representation
+        int maxOctal = game->maxNumber;
+        if (maxOctal > 777) maxOctal = 777; // Max valid octal in this range
+        
+        do {
+            newNumber = game->minNumber + rand() % (maxOctal - game->minNumber + 1);
+            // Check if all digits are valid octal (0-7)
+            int temp = newNumber;
+            bool validOctal = true;
+            while (temp > 0) {
+                if (temp % 10 >= 8) {
+                    validOctal = false;
+                    break;
+                }
+                temp /= 10;
+            }
+            if (validOctal || newNumber == 0) break;
+        } while (true);
+    } else {
+        newNumber = game->minNumber + rand() % (game->maxNumber - game->minNumber + 1);
+    }
 
     // Reset level immediately instead of using transition
     resetLevel(game, newNumber);
@@ -191,6 +221,12 @@ void generateNewLevel(GameState* game) {
 
 void resetLevel(GameState* game, int newNumber) {
     game->originalNumber = newNumber;
+    
+    // Clear bits array before conversion to avoid old data
+    for (int i = 0; i < MAX_BITS; i++) {
+        game->bits[i] = 0;
+    }
+    
     game->bitCount = convertToBinary(newNumber, game->bits, MAX_BITS, game->conversionType);
     game->currentBitIndex = 0;
     game->expectedBitIndex = 0;

@@ -24,6 +24,12 @@ int binaryConvert(int number,int *bits,int maxBits){
 // Convert octal to binary (octal number is given as decimal representation of octal)
 // For example: 17 (octal) = 15 (decimal) = 1111 (binary)
 int octalToBinary(int octalNumber, int* bits, int maxBits) {
+    // Handle zero case
+    if (octalNumber == 0) {
+        bits[0] = 0;
+        return 1;
+    }
+    
     // First convert octal to decimal
     int decimal = 0;
     int base = 1;
@@ -31,7 +37,7 @@ int octalToBinary(int octalNumber, int* bits, int maxBits) {
     while (octalNumber > 0) {
         int digit = octalNumber % 10;
         if (digit >= 8) {
-            // Invalid octal digit
+            // Invalid octal digit - treat as 0
             bits[0] = 0;
             return 1;
         }
